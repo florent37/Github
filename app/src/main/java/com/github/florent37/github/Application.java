@@ -21,7 +21,7 @@ public class Application extends android.app.Application {
 
         Application.application = this;
 
-        contextComponent = DaggerContextComponent.builder().contextModule(new ContextModule(this)).build();
+        contextComponent = DaggerContextComponent.builder().contextModule(new ContextModule(getApplicationContext())).build();
         this.githubComponent = DaggerGithubComponent.builder()
                 .contextComponent(contextComponent)
                 .build();

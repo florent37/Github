@@ -1,5 +1,6 @@
 package com.github.florent37.github.repo;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
@@ -14,13 +15,21 @@ import java.util.List;
 public class RepoManager {
 
     protected List<Repo> repos = new ArrayList<>();
-    protected SharedPreferences sharedPreferences;
     protected Gson gson;
+    protected final static String PREFS_REPOS = "PREFS_REPOS";
     protected final static String REPOS = "REPOS";
+    protected SharedPreferences sharedPreferences;
 
-    public RepoManager(SharedPreferences sharedPreferences, Gson gson) {
-        this.sharedPreferences = sharedPreferences;
+    public RepoManager(Gson gson) {
         this.gson = gson;
+    }
+
+    public void onStart(Context context){
+        sharedPreferences = context.getSharedPreferences(PREFS_REPOS,Context.MODE_PRIVATE);
+    }
+
+    public void onStop(){
+        sharedPreferences = null;
     }
 
     public Repo addRepo(Repo repo) {

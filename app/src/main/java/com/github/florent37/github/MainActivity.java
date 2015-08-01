@@ -1,7 +1,7 @@
 package com.github.florent37.github;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 
 import com.github.florent37.carpaccio.Carpaccio;
+import com.github.florent37.github.event.ListEventFragment;
 import com.github.florent37.github.repo.ListRepoFragment;
 import com.github.florent37.github.user.User;
 import com.github.florent37.github.user.UserManager;
@@ -20,7 +21,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -54,42 +54,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Application.getApplication().getGithubComponent().inject(this);
         ButterKnife.bind(this);
 
-        //swipeRefresh.setOnRefreshListener(() -> getRepos());
-
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         navigationView.setNavigationItemSelectedListener(this);
-
         drawerLayout.setDrawerListener((actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0)));
-
-        displayStats();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        userManager.onStart(this);
 
-        User savedUser = userManager.load();
-        if(savedUser != null)
+        final User savedUser = userManager.load(this);
+        if (savedUser != null)
             displayUser(savedUser);
-        else {
+        else
             githubAPI.user("Florent37")
-                    .subscribeOn(Schedulers.newThread())
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .onErrorReturn(throwable -> {
                         Log.e("user", throwable.getMessage(), throwable);
                         return null;
                     })
                     .doOnError(throwable -> Log.e("user", throwable.getMessage(), throwable))
-                    .map(user -> userManager.setUser(user))
+                    .map(user -> userManager.setUser(user,MainActivity.this))
                     .subscribe(user -> {
                         if (user != null) {
                             displayUser(user);
                         }
                     });
+    }
 
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        userManager.onStop();
     }
 
     @Override
@@ -104,13 +105,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     protected boolean closeDrawer() {
-        drawerLayout.postDelayed(() -> drawerLayout.closeDrawer(Gravity.LEFT), 1000);
+        drawerLayout.postDelayed(() -> drawerLayout.closeDrawer(Gravity.LEFT), 500);
         return true;
     }
 
-    public void displayUser(User user){
+    public void displayUser(User user) {
         drawerCarpaccio.mapObject("user", user);
-        displayEvents();
+        displayStats();
     }
 
     public void displayStats() {
@@ -121,7 +122,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void displayEvents() {
-        displayStats();
+        if (getSupportFragmentManager().findFragmentByTag("ListEventFragment") == null)
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, ListEventFragment.newInstance(), "ListEventFragment")
+                    .commit();
     }
 
     @Override

@@ -31,20 +31,14 @@ public class GithubModule {
 
     @Singleton
     @Provides
-    public SharedPreferences provideSharedPreferences(Context context){
-        return context.getSharedPreferences("Github",Context.MODE_PRIVATE);
+    public RepoManager provideRepoManager(Gson gson){
+        return new RepoManager(gson);
     }
 
     @Singleton
     @Provides
-    public RepoManager provideRepoManager(Context context, Gson gson, SharedPreferences sharedPreferences){
-        return new RepoManager(sharedPreferences,gson);
-    }
-
-    @Singleton
-    @Provides
-    public UserManager provideUserManager(Context context, Gson gson, SharedPreferences sharedPreferences){
-        return new UserManager(sharedPreferences,gson);
+    public UserManager provideUserManager(Gson gson){
+        return new UserManager(gson);
     }
 
     @Singleton

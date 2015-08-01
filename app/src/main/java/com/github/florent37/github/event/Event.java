@@ -54,4 +54,16 @@ public class Event {
     public void setPayload(Payload payload) {
         this.payload = payload;
     }
+
+    public String getUserName() {
+        return actor.getLogin();
+    }
+
+    public String getRepoName() {
+        return repo.getName();
+    }
+
+    public String getAction(){
+        return payload.getName();
+    }
 }

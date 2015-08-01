@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:background="#EEE"
         android:tag="
-            adapter(repo,R.layout.cell_repo);
+            adapter(event,R.layout.cell_event);
             "
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 

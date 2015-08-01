@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.florent37.carpaccio.Carpaccio;
+import com.github.florent37.carpaccio.controllers.adapter.CarpaccioRecyclerViewAdapter;
 import com.github.florent37.carpaccio.controllers.adapter.Holder;
 import com.github.florent37.carpaccio.controllers.adapter.RecyclerViewCallbackAdapter;
 import com.github.florent37.github.Application;
@@ -24,7 +25,9 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observable;
+import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -41,6 +44,8 @@ public class ListRepoFragment extends Fragment {
 
     @Bind(R.id.carpaccio)
     Carpaccio carpaccio;
+
+    Scheduler.Worker worker;
 
     public static Fragment newInstance() {
         return new ListRepoFragment();
@@ -66,26 +71,39 @@ public class ListRepoFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        repoManager.onStart(getActivity());
 
         if (repoManager.load() != null)
             carpaccio.mapList("repo", repoManager.getRepos());
 
-        carpaccio.getAdapter("repo").setRecyclerViewCallback(new RecyclerViewCallbackAdapter<Repo>() {
-            @Override
-            public Holder<Repo> onCreateViewHolder(View view, int viewType) {
-                return new RepoHolder(view);
-            }
-        });
+        CarpaccioRecyclerViewAdapter adapter = carpaccio.getAdapter("repo");
+        if (adapter != null)
+            adapter.setRecyclerViewCallback(new RecyclerViewCallbackAdapter<Repo>() {
+                @Override
+                public Holder<Repo> onCreateViewHolder(View view, int viewType) {
+                    return new RepoHolder(view);
+                }
+            });
 
-        Schedulers.io().createWorker().schedule(ListRepoFragment.this::getRepos, 1, TimeUnit.MINUTES);
+        worker = Schedulers.io().createWorker();
+        worker.schedule(ListRepoFragment.this::getRepos, 1, TimeUnit.MINUTES);
+        getRepos();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        worker.unsubscribe();
+        repoManager.onStop();
     }
 
     protected void getRepos() {
 
         if (userManager.getUser() != null)
-            githubAPI.listRepos(userManager.getUser().getName())
+            githubAPI.listRepos(userManager.getUser().getLogin())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
+                    .onErrorReturn(null)
 
                             //sort
                     .flatMap(Observable::from)
@@ -100,7 +118,7 @@ public class ListRepoFragment extends Fragment {
                     .flatMap(Observable::from)
                     .toSortedList(Repo::compareTo)
 
-                    .finallyDo(repoManager::save)
+                    .finallyDo(() -> repoManager.save())
 
                     .subscribe(repos -> {
                         if (repos != null)

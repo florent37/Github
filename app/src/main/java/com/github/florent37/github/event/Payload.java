@@ -5,6 +5,15 @@ package com.github.florent37.github.event;
  */
 public class Payload {
     String action;
+    Forkee forkee;
+
+    public Forkee getForkee() {
+        return forkee;
+    }
+
+    public void setForkee(Forkee forkee) {
+        this.forkee = forkee;
+    }
 
     public String getAction() {
         return action;
@@ -12,5 +21,11 @@ public class Payload {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public String getName(){
+        if(forkee != null)
+            return "forked";
+        else return action;
     }
 }

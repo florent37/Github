@@ -1,6 +1,7 @@
 package com.github.florent37.github.dagger;
 
 import com.github.florent37.github.GithubAPI;
+import com.github.florent37.github.event.ListEventFragment;
 import com.github.florent37.github.repo.ListRepoFragment;
 import com.github.florent37.github.MainActivity;
 import com.github.florent37.github.dagger.context.ContextComponent;
@@ -21,4 +22,5 @@ public interface GithubComponent {
 
     void inject(MainActivity mainActivity);
     void inject(ListRepoFragment listRepoFragment);
+    void inject(ListEventFragment listEventFragment);
 }
