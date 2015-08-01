@@ -1,4 +1,4 @@
-package com.github.florent37.github.dagger.context;
+package com.github.florent37.github.dagger;
 
 import android.content.Context;
 
