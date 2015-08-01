@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onStart();
         userManager.onStart(this);
 
-        final User savedUser = userManager.load(this);
+        final User savedUser = userManager.load();
         if (savedUser != null)
             displayUser(savedUser);
         else
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         return null;
                     })
                     .doOnError(throwable -> Log.e("user", throwable.getMessage(), throwable))
-                    .map(user -> userManager.setUser(user,MainActivity.this))
+                    .map(user -> userManager.setUser(user))
                     .subscribe(user -> {
                         if (user != null) {
                             displayUser(user);

@@ -3,6 +3,7 @@ package com.github.florent37.github.user;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -29,17 +30,18 @@ public class UserManager {
         sharedPreferences = null;
     }
 
-    public void save(Context context) {
+    public void save() {
         new Handler().post(() -> {
             String json = gson.toJson(user);
             sharedPreferences.edit().putString(USER, json).commit();
         });
     }
 
-    public User load(Context context) {
+    public User load() {
         String json = sharedPreferences.getString(USER, null);
         if (json != null)
             user = gson.fromJson(json, User.class);
+        Log.d("user", json);
         return user;
     }
 
@@ -47,10 +49,10 @@ public class UserManager {
         return user;
     }
 
-    public User setUser(User user, Context context) {
+    public User setUser(User user) {
         if (user != null) {
             this.user = user;
-            this.save(context);
+            this.save();
         }
         return this.user;
     }
