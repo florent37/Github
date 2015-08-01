@@ -13,14 +13,11 @@ import com.github.florent37.github.GithubAPI;
 import com.github.florent37.github.R;
 import com.github.florent37.github.user.UserManager;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 /**
  * Created by florentchampigny on 01/08/15.
@@ -50,7 +47,7 @@ public class ListEventFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        Application.getApplication().getGithubComponent().inject(this);
+        Application.app().component().inject(this);
     }
 
     @Override

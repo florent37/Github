@@ -17,6 +17,10 @@ public class ContextModule{
         this.context = context;
     }
 
+    public static ContextModule with(Context context) {
+        return new ContextModule(context);
+    }
+
     @Provides
     public Context provideContext(){
         return context;

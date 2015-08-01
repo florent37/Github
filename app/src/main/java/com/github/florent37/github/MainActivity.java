@@ -1,7 +1,6 @@
 package com.github.florent37.github;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Application.getApplication().getGithubComponent().inject(this);
+        Application.app().component().inject(this);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);

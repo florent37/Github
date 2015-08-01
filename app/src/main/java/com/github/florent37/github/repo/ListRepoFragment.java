@@ -27,7 +27,6 @@ import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -61,7 +60,7 @@ public class ListRepoFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        Application.getApplication().getGithubComponent().inject(this);
+        Application.app().component().inject(this);
 
         carpaccio.onItemClick("repo", (o, i, view1) -> {
             Toast.makeText(getActivity(), "position " + i, Toast.LENGTH_SHORT).show();

@@ -19,15 +19,15 @@ public class Application extends android.app.Application {
         Application.application = this;
 
         this.githubComponent = DaggerGithubComponent.builder()
-                .contextModule(new ContextModule(this))
+                .contextModule(ContextModule.with(this))
                 .build();
     }
 
-    public static Application getApplication() {
+    public static Application app() {
         return application;
     }
 
-    public GithubComponent getGithubComponent() {
+    public GithubComponent component() {
         return githubComponent;
     }
 
