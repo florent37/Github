@@ -117,7 +117,7 @@ public class ListRepoFragment extends Fragment {
                     .flatMap(Observable::from)
                     .toSortedList(Repo::compareTo)
 
-                    .finallyDo(() -> repoManager.save())
+                    .finallyDo(repoManager::save)
 
                     .subscribe(repos -> {
                         if (repos != null)

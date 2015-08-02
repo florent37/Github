@@ -28,8 +28,9 @@
         android:layout_gravity="bottom"
         android:layout_marginBottom="72dp"
         android:tag="
-            replace(de.hdodenhof.circleimageview.CircleImageView);
+            circle();
             enablePreview();
+            previewUrl(https://avatars.githubusercontent.com/u/5754972?v=3);
             url($user.avatar_url);"
         />
 

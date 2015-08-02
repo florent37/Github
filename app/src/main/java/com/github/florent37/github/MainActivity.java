@@ -66,10 +66,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onStart();
         userManager.onStart(this);
 
-        final User savedUser = userManager.load();
-        if (savedUser != null)
-            displayUser(savedUser);
-        else
+        //final User savedUser = userManager.load();
+        //if (savedUser != null)
+        //    displayUser(savedUser);
+        //else
             githubAPI.user("Florent37")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
