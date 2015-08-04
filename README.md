@@ -2,7 +2,9 @@
 
 This Github android sample application can give you a quick summary of your github repos.
 
-#Dagger2
+
+
+#[Dagger2][google.github.io/dagger/]
 
 ```java
 @Singleton
