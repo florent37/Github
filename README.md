@@ -5,7 +5,7 @@ This Github android sample application can give you a quick summary of your gith
 ![Alt sample](https://raw.githubusercontent.com/florent37/Github/master/screens/stats_small.png)
 ![Alt sample](https://raw.githubusercontent.com/florent37/Github/master/screens/events_small.png)
 
-#[Dagger2][google.github.io/dagger/]
+#[Dagger2](google.github.io/dagger/)
 
 ```java
 @Singleton
