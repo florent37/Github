@@ -10,6 +10,9 @@ This Github android sample application can give you a quick summary of your gith
 #[Dagger2](google.github.io/dagger/)
 >>>>>>> origin/master
 
+![Alt sample](https://raw.githubusercontent.com/florent37/Github/master/screens/stats_small.png)
+![Alt sample](https://raw.githubusercontent.com/florent37/Github/master/screens/events_small.png)
+
 ```java
 @Singleton
 @Component(modules = {GithubModule.class, ContextModule.class})
