@@ -2,9 +2,13 @@
 
 This Github android sample application can give you a quick summary of your github repos.
 
+<<<<<<< HEAD
 
 
 #[Dagger2][google.github.io/dagger/]
+=======
+#[Dagger2](google.github.io/dagger/)
+>>>>>>> origin/master
 
 ```java
 @Singleton
@@ -21,7 +25,7 @@ public interface GithubComponent {
 }
 ```
 
-#RxJava & RetroLambda
+#[RxAndroid](https://github.com/ReactiveX/RxAndroid) & [RetroLambda](https://github.com/evant/gradle-retrolambda)
 
 Using the github API with Retrofit
 
@@ -34,7 +38,7 @@ githubAPI.userEvents(userManager.getUser().getLogin())
                     });
 ```
 
-#Carpaccio
+#[Carpaccio](https://github.com/florent37/Carpaccio)
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
