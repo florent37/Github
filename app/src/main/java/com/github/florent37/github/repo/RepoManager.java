@@ -46,7 +46,7 @@ public class RepoManager {
 
             return oldRepo;
         }else{
-            repos.add(repo);
+            repos.add(repo); //a new repo
             return repo;
         }
     }
@@ -57,7 +57,7 @@ public class RepoManager {
             List<Repo> saved = gson.fromJson(json, new TypeToken<List<Repo>>() {
             }.getType());
             if (saved != null)
-                this.repos.addAll(saved);
+                this.repos = saved;
         }
         return getRepos();
     }
