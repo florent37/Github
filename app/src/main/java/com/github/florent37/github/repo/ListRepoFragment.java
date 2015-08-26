@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.florent37.carpaccio.Carpaccio;
-import com.github.florent37.carpaccio.controllers.adapter.CarpaccioRecyclerViewAdapter;
 import com.github.florent37.carpaccio.controllers.adapter.Holder;
+import com.github.florent37.carpaccio.controllers.adapter.OnItemClickListenerAdapter;
 import com.github.florent37.carpaccio.controllers.adapter.RecyclerViewCallbackAdapter;
 import com.github.florent37.github.Application;
 import com.github.florent37.github.GithubAPI;
@@ -62,8 +62,11 @@ public class ListRepoFragment extends Fragment {
         ButterKnife.bind(this, view);
         Application.app().component().inject(this);
 
-        carpaccio.onItemClick("repo", (o, i, view1) -> {
-            Toast.makeText(getActivity(), "position " + i, Toast.LENGTH_SHORT).show();
+        carpaccio.onItemClick("repo", new OnItemClickListenerAdapter() {
+            @Override
+            public void onItemClick(Object item, int position, Holder holder) {
+                Toast.makeText(getActivity(), "position " + position, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -72,14 +75,21 @@ public class ListRepoFragment extends Fragment {
         super.onStart();
         repoManager.onStart(getActivity());
 
-        if (repoManager.load() != null)
-            carpaccio.mapList("repo", repoManager.getRepos());
+        if (repoManager.load() != null) {
+            Observable.from(repoManager.getRepos())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .toSortedList(Repo::compareTo)
+                    .subscribe(repos -> {
+                        carpaccio.mapList("repo", repos);
+                    });
 
-        CarpaccioRecyclerViewAdapter adapter = carpaccio.getAdapter("repo");
-        if (adapter != null)
-            adapter.setRecyclerViewCallback(new RecyclerViewCallbackAdapter<Repo>() {
+        }
+
+        if (carpaccio.getAdapter("repo") != null)
+            carpaccio.getAdapter("repo").setRecyclerViewCallback(new RecyclerViewCallbackAdapter() {
                 @Override
-                public Holder<Repo> onCreateViewHolder(View view, int viewType) {
+                public Holder onCreateViewHolder(View view, int viewType) {
                     return new RepoHolder(view);
                 }
             });
@@ -104,19 +114,12 @@ public class ListRepoFragment extends Fragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .onErrorReturn(null)
 
-                            //sort
-                    .flatMap(Observable::from)
-                    .toSortedList(Repo::compareTo)
-
                             //add to repo manager
                     .flatMap(Observable::from)
                     .map(repoManager::addRepo)
-                    .toList()
-
-                            //sort
-                    .flatMap(Observable::from)
                     .toSortedList(Repo::compareTo)
 
+                            //sort
                     .finallyDo(repoManager::save)
 
                     .subscribe(repos -> {

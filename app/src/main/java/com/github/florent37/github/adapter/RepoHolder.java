@@ -14,13 +14,14 @@ import butterknife.ButterKnife;
 /**
  * Created by florentchampigny on 31/07/15.
  */
-public class RepoHolder extends Holder<Repo>{
+public class RepoHolder extends Holder{
 
     int textColor;
 
     @Bind(R.id.newStars)
     TextView newStars;
-    @Bind(R.id.newForks) TextView newForks;
+    @Bind(R.id.newForks)
+    TextView newForks;
 
     public RepoHolder(View itemView) {
         super(itemView);
