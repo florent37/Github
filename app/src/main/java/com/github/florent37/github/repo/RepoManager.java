@@ -9,6 +9,9 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+import rx.Subscriber;
+
 /**
  * Created by florentchampigny on 31/07/15.
  */
@@ -60,6 +63,16 @@ public class RepoManager {
                 this.repos = saved;
         }
         return getRepos();
+    }
+
+    public Observable<List<Repo>> loadRepos(){
+        return Observable.create(new Observable.OnSubscribe<List<Repo>>() {
+            @Override
+            public void call(Subscriber<? super List<Repo>> subscriber) {
+                subscriber.onNext(load());
+                subscriber.onCompleted();
+            }
+        });
     }
 
     public void save() {

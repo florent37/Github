@@ -75,16 +75,13 @@ public class ListRepoFragment extends Fragment {
         super.onStart();
         repoManager.onStart(getActivity());
 
-        if (repoManager.load() != null) {
-            Observable.from(repoManager.getRepos())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .toSortedList(Repo::compareTo)
-                    .subscribe(repos -> {
-                        carpaccio.mapList("repo", repos);
-                    });
+        repoManager.loadRepos()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(repos -> {
+                    carpaccio.mapList("repo", repos);
+                });
 
-        }
 
         if (carpaccio.getAdapter("repo") != null)
             carpaccio.getAdapter("repo").setRecyclerViewCallback(new RecyclerViewCallbackAdapter() {
@@ -95,8 +92,8 @@ public class ListRepoFragment extends Fragment {
             });
 
         worker = Schedulers.io().createWorker();
-        worker.schedule(ListRepoFragment.this::getRepos, 1, TimeUnit.MINUTES);
-        getRepos();
+        worker.schedule(ListRepoFragment.this::getReposFromNetwork, 1, TimeUnit.MINUTES);
+        getReposFromNetwork();
     }
 
     @Override
@@ -106,7 +103,7 @@ public class ListRepoFragment extends Fragment {
         repoManager.onStop();
     }
 
-    protected void getRepos() {
+    protected void getReposFromNetwork() {
 
         if (userManager.getUser() != null)
             githubAPI.listRepos(userManager.getUser().getLogin())

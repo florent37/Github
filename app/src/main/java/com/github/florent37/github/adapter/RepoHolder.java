@@ -30,7 +30,8 @@ public class RepoHolder extends Holder{
         textColor = newStars.getCurrentTextColor();
     }
 
-    public void onBind(Repo repo) {
+    public void onBind(Object object) {
+        Repo repo = (Repo)object;
         if(repo.getNewStarsCount() > 0) {
             newStars.setTextColor(Color.RED);
         }
