@@ -5,6 +5,8 @@
       <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.github.ksoichiro/android-observablescrollview/1.5.2/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.ksoichiro/android-observablescrollview/1.5.2/a2f8deed77d7292ef6493aa0f83fe2eba6fa0d73/android-observablescrollview-1.5.2-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

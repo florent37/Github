@@ -20,8 +20,10 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
 
     ActionBarDrawerToggle actionBarDrawerToggle;
+
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,26 +74,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //if (savedUser != null)
         //    displayUser(savedUser);
         //else
-            githubAPI.user("Florent37")
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .onErrorReturn(throwable -> {
-                        Log.e("user", throwable.getMessage(), throwable);
-                        return null;
-                    })
-                    .doOnError(throwable -> Log.e("user", throwable.getMessage(), throwable))
-                    .map(user -> userManager.setUser(user))
-                    .subscribe(user -> {
-                        if (user != null) {
-                            displayUser(user);
-                        }
-                    });
+
+        compositeSubscription.add(
+                githubAPI.user("Florent37")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<User>() {
+                            @Override public void onCompleted() {
+                            }
+
+                            @Override public void onError(Throwable throwable) {
+                                Log.e("user", throwable.getMessage(), throwable);
+                            }
+
+                            @Override public void onNext(User user) {
+                                userManager.setUser(user);
+                                displayUser(user);
+                            }
+                        }));
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         userManager.onStop();
+
+        compositeSubscription.unsubscribe();
     }
 
     @Override

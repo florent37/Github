@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {GithubModule.class, ContextModule.class})
+@Component(modules = {GithubModule.class})
 public interface GithubComponent {
 
     GithubAPI githubApi();

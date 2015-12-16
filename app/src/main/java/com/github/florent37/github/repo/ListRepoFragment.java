@@ -18,6 +18,7 @@ import com.github.florent37.github.R;
 import com.github.florent37.github.adapter.RepoHolder;
 import com.github.florent37.github.user.UserManager;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -25,9 +26,12 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Observable;
+import rx.Observer;
 import rx.Scheduler;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by florentchampigny on 31/07/15.
@@ -45,6 +49,7 @@ public class ListRepoFragment extends Fragment {
     Carpaccio carpaccio;
 
     Scheduler.Worker worker;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     public static Fragment newInstance() {
         return new ListRepoFragment();
@@ -75,13 +80,13 @@ public class ListRepoFragment extends Fragment {
         super.onStart();
         repoManager.onStart(getActivity());
 
-        repoManager.loadRepos()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(repos -> {
-                    carpaccio.mapList("repo", repos);
-                });
-
+        compositeSubscription.add(
+                repoManager.loadRepos()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(repos -> {
+                            carpaccio.mapList("repo", repos);
+                        }));
 
         if (carpaccio.getAdapter("repo") != null)
             carpaccio.getAdapter("repo").setRecyclerViewCallback(new RecyclerViewCallbackAdapter() {
@@ -101,29 +106,39 @@ public class ListRepoFragment extends Fragment {
         super.onStop();
         worker.unsubscribe();
         repoManager.onStop();
+
+        compositeSubscription.clear();
     }
 
     protected void getReposFromNetwork() {
 
-        if (userManager.getUser() != null)
-            githubAPI.listRepos(userManager.getUser().getLogin())
+        if (userManager.getUser() != null) {
+            compositeSubscription.add(githubAPI.listRepos(userManager.getUser().getLogin())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .onErrorReturn(null)
 
                             //add to repo manager
                     .flatMap(Observable::from)
-                    .map(repoManager::addRepo)
                     .toSortedList(Repo::compareTo)
 
-                            //sort
-                    .finallyDo(repoManager::save)
+                    .subscribe(new Observer<List<Repo>>() {
+                        @Override public void onCompleted() {
+                            repoManager.save();
+                        }
 
-                    .subscribe(repos -> {
-                        if (repos != null)
-                            carpaccio.mapList("repo", repos);
-                        //swipeRefresh.setRefreshing(false);
-                    });
+                        @Override public void onError(Throwable e) {
+
+                        }
+
+                        @Override public void onNext(List<Repo> repos) {
+                            if (repos != null) {
+                                repoManager.addRepos(repos).save();
+                                carpaccio.mapList("repo", repos);
+                            }
+                        }
+                    }));
+        }
     }
 
 }

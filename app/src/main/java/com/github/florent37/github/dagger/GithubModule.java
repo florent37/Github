@@ -23,6 +23,17 @@ import retrofit.android.AndroidLog;
 @Module
 public class GithubModule {
 
+    Context context;
+
+    public GithubModule(Context context) {
+        this.context = context;
+    }
+
+    @Provides
+    public Context provideContext(){
+        return context;
+    }
+
     @Singleton
     @Provides
     public Gson provideGson(){

@@ -13,11 +13,15 @@ import com.github.florent37.github.GithubAPI;
 import com.github.florent37.github.R;
 import com.github.florent37.github.user.UserManager;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by florentchampigny on 01/08/15.
@@ -32,6 +36,8 @@ public class ListEventFragment extends Fragment {
 
     @Bind(R.id.carpaccio)
     Carpaccio carpaccio;
+
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     public static Fragment newInstance() {
         return new ListEventFragment();
@@ -55,11 +61,26 @@ public class ListEventFragment extends Fragment {
         super.onStart();
 
         if (userManager.getUser() != null)
-            githubAPI.userEvents(userManager.getUser().getLogin())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .onErrorReturn(null)
-                    .subscribe(events -> {
-                        if (events != null) carpaccio.mapList("event", events);
-                    });
+            compositeSubscription.add(
+                    githubAPI.userEvents(userManager.getUser().getLogin())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<List<Event>>() {
+                                @Override public void onCompleted() {
+
+                                }
+
+                                @Override public void onError(Throwable e) {
+
+                                }
+
+                                @Override public void onNext(List<Event> events) {
+                                     carpaccio.mapList("event", events);
+                                }
+                            }));
+    }
+
+    @Override public void onStop() {
+        super.onStop();
+        compositeSubscription.unsubscribe();
     }
 }

@@ -1,5 +1,7 @@
 package com.github.florent37.github.event;
 
+import com.github.florent37.github.repo.Forkee;
+
 /**
  * Created by florentchampigny on 31/07/15.
  */

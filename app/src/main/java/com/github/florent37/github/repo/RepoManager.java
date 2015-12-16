@@ -83,4 +83,10 @@ public class RepoManager {
     public List<Repo> getRepos() {
         return repos;
     }
+
+    public RepoManager addRepos(List<Repo> repos) {
+        for(Repo repo : repos)
+            addRepo(repo);
+        return this;
+    }
 }
