@@ -16,7 +16,6 @@ import com.github.florent37.github.Application;
 import com.github.florent37.github.GithubAPI;
 import com.github.florent37.github.R;
 import com.github.florent37.github.adapter.RepoHolder;
-import com.github.florent37.github.user.UserManager;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +27,6 @@ import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Observer;
 import rx.Scheduler;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -38,21 +36,33 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class ListRepoFragment extends Fragment {
 
+    static final String USERNAME = "userName";
+    public static final int REFRESH_EACH_MINUTES = 1;
+
     @Inject
     RepoManager repoManager;
-    @Inject
-    UserManager userManager;
     @Inject
     GithubAPI githubAPI;
 
     @Bind(R.id.carpaccio)
     Carpaccio carpaccio;
 
+    String userName;
     Scheduler.Worker worker;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
-    public static Fragment newInstance() {
-        return new ListRepoFragment();
+    public static Fragment newInstance(String userName) {
+        ListRepoFragment fragment = new ListRepoFragment();
+        Bundle args = new Bundle();
+        args.putString(USERNAME, userName);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        userName = getArguments().getString(USERNAME);
     }
 
     @Nullable
@@ -81,23 +91,24 @@ public class ListRepoFragment extends Fragment {
         repoManager.onStart(getActivity());
 
         compositeSubscription.add(
-                repoManager.loadRepos()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(repos -> {
-                            carpaccio.mapList("repo", repos);
-                        }));
+            repoManager.loadRepos()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(repos -> {
+                    carpaccio.mapList("repo", repos);
+                }));
 
-        if (carpaccio.getAdapter("repo") != null)
+        if (carpaccio.getAdapter("repo") != null) {
             carpaccio.getAdapter("repo").setRecyclerViewCallback(new RecyclerViewCallbackAdapter() {
                 @Override
                 public Holder onCreateViewHolder(View view, int viewType) {
                     return new RepoHolder(view);
                 }
             });
+        }
 
         worker = Schedulers.io().createWorker();
-        worker.schedule(ListRepoFragment.this::getReposFromNetwork, 1, TimeUnit.MINUTES);
+        worker.schedule(ListRepoFragment.this::getReposFromNetwork, REFRESH_EACH_MINUTES, TimeUnit.MINUTES);
         getReposFromNetwork();
     }
 
@@ -111,34 +122,34 @@ public class ListRepoFragment extends Fragment {
     }
 
     protected void getReposFromNetwork() {
+        compositeSubscription.add(githubAPI.listRepos(userName)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .onErrorReturn(null)
 
-        if (userManager.getUser() != null) {
-            compositeSubscription.add(githubAPI.listRepos(userManager.getUser().getLogin())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .onErrorReturn(null)
+            //add to repo manager
+            .flatMap(Observable::from)
+            .toSortedList(Repo::compareTo)
 
-                            //add to repo manager
-                    .flatMap(Observable::from)
-                    .toSortedList(Repo::compareTo)
+            .subscribe(new Observer<List<Repo>>() {
+                @Override
+                public void onCompleted() {
+                    repoManager.save();
+                }
 
-                    .subscribe(new Observer<List<Repo>>() {
-                        @Override public void onCompleted() {
-                            repoManager.save();
-                        }
+                @Override
+                public void onError(Throwable e) {
 
-                        @Override public void onError(Throwable e) {
+                }
 
-                        }
-
-                        @Override public void onNext(List<Repo> repos) {
-                            if (repos != null) {
-                                repoManager.addRepos(repos).save();
-                                carpaccio.mapList("repo", repos);
-                            }
-                        }
-                    }));
-        }
+                @Override
+                public void onNext(List<Repo> repos) {
+                    if (repos != null) {
+                        repoManager.addRepos(repos);
+                        carpaccio.mapList("repo", repos);
+                    }
+                }
+            }));
     }
 
 }

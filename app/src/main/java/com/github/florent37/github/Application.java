@@ -4,8 +4,6 @@ import com.github.florent37.github.dagger.DaggerGithubComponent;
 import com.github.florent37.github.dagger.GithubComponent;
 import com.github.florent37.github.dagger.GithubModule;
 
-import java.util.Timer;
-
 /**
  * Created by florentchampigny on 03/06/15.
  */

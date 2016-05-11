@@ -16,7 +16,6 @@ import dagger.Component;
 public interface GithubComponent {
 
     GithubAPI githubApi();
-    RepoManager repoManager();
     UserManager userManager();
 
     void inject(MainActivity mainActivity);

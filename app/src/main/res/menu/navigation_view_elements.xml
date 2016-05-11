@@ -2,8 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/stats"
-            android:title="Stats" />
+            android:id="@+id/florent37"
+            android:title="Florent37" />
+        <item
+            android:id="@+id/meetic"
+            android:title="Meetic" />
         <item
             android:id="@+id/events"
             android:title="Events" />

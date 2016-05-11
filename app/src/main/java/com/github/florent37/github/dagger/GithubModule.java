@@ -9,6 +9,7 @@ import com.github.florent37.github.repo.RepoManager;
 import com.github.florent37.github.user.UserManager;
 import com.google.gson.Gson;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -36,14 +37,15 @@ public class GithubModule {
 
     @Singleton
     @Provides
-    public Gson provideGson(){
-        return new Gson();
+    @Named(RepoManager.PREFS_REPOS)
+    public SharedPreferences provideSharedPrefsRepo(Context context){
+        return context.getSharedPreferences(RepoManager.PREFS_REPOS,Context.MODE_PRIVATE);
     }
 
     @Singleton
     @Provides
-    public RepoManager provideRepoManager(Gson gson){
-        return new RepoManager(gson);
+    public Gson provideGson(){
+        return new Gson();
     }
 
     @Singleton

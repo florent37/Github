@@ -1,6 +1,7 @@
 package com.github.florent37.github;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,17 +28,14 @@ import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String USER_FLORENT37 = "florent37";
+    public static final String USER_MEETIC = "meetic";
+
     @Inject
     GithubAPI githubAPI;
 
-    @Inject
-    UserManager userManager;
-
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-
-    @Bind(R.id.drawerCarpaccio)
-    Carpaccio drawerCarpaccio;
 
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
@@ -46,8 +44,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
 
     ActionBarDrawerToggle actionBarDrawerToggle;
-
-    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,44 +58,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         navigationView.setNavigationItemSelectedListener(this);
-        drawerLayout.setDrawerListener((actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0)));
-    }
+        drawerLayout.addDrawerListener((actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0)));
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        userManager.onStart(this);
-
-        //final User savedUser = userManager.load();
-        //if (savedUser != null)
-        //    displayUser(savedUser);
-        //else
-
-        compositeSubscription.add(
-                githubAPI.user("Florent37")
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<User>() {
-                            @Override public void onCompleted() {
-                            }
-
-                            @Override public void onError(Throwable throwable) {
-                                Log.e("user", throwable.getMessage(), throwable);
-                            }
-
-                            @Override public void onNext(User user) {
-                                userManager.setUser(user);
-                                displayUser(user);
-                            }
-                        }));
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        userManager.onStop();
-
-        compositeSubscription.unsubscribe();
+        displayStats(USER_FLORENT37);
     }
 
     @Override
@@ -113,40 +74,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return actionBarDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
-    protected boolean closeDrawer() {
-        drawerLayout.postDelayed(() -> drawerLayout.closeDrawer(Gravity.LEFT), 500);
-        return true;
-    }
-
-    public void displayUser(User user) {
-        drawerCarpaccio.mapObject("user", user);
-        displayStats();
-    }
-
-    public void displayStats() {
-        if (getSupportFragmentManager().findFragmentByTag("ListRepoFragment") == null)
+    public void displayStats(String userName) {
+        String tag = "ListRepoFragment"+userName;
+        if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, ListRepoFragment.newInstance(), "ListRepoFragment")
-                    .commit();
+                .replace(R.id.fragmentContainer, ListRepoFragment.newInstance(userName), tag)
+                .commit();
+        }
     }
 
     public void displayEvents() {
-        if (getSupportFragmentManager().findFragmentByTag("ListEventFragment") == null)
+        if (getSupportFragmentManager().findFragmentByTag("ListEventFragment") == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragmentContainer, ListEventFragment.newInstance(), "ListEventFragment")
-                    .commit();
+                .replace(R.id.fragmentContainer, ListEventFragment.newInstance(), "ListEventFragment")
+                .commit();
+        }
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.stats:
-                displayStats();
+            case R.id.florent37:
+                displayStats(USER_FLORENT37);
+                return closeDrawer();
+            case R.id.meetic:
+                displayStats(USER_MEETIC);
                 return closeDrawer();
             case R.id.events:
                 displayEvents();
                 return closeDrawer();
         }
         return false;
+    }
+
+    protected boolean closeDrawer() {
+        drawerLayout.postDelayed(() -> drawerLayout.closeDrawer(Gravity.LEFT), 500);
+        return true;
     }
 }

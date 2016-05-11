@@ -9,46 +9,52 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import rx.Observable;
 import rx.Subscriber;
 
 /**
  * Created by florentchampigny on 31/07/15.
  */
+@Singleton
 public class RepoManager {
 
+    public final static String PREFS_REPOS = "PREFS_REPOS";
+    public final static String REPOS = "REPOS";
     protected List<Repo> repos = new ArrayList<>();
-    protected Gson gson;
-    protected final static String PREFS_REPOS = "PREFS_REPOS";
-    protected final static String REPOS = "REPOS";
-    protected SharedPreferences sharedPreferences;
+    @Inject Gson gson;
+    @Inject @Named(PREFS_REPOS) SharedPreferences sharedPreferences;
 
-    public RepoManager(Gson gson) {
-        this.gson = gson;
+    @Inject
+    RepoManager() {
+
     }
 
-    public void onStart(Context context){
-        sharedPreferences = context.getSharedPreferences(PREFS_REPOS,Context.MODE_PRIVATE);
+    public void onStart(Context context) {
+        sharedPreferences = context.getSharedPreferences(PREFS_REPOS, Context.MODE_PRIVATE);
     }
 
-    public void onStop(){
+    public void onStop() {
         sharedPreferences = null;
     }
 
     public Repo addRepo(Repo repo) {
         if (repos.contains(repo)) {
             Repo oldRepo = repos.get(repos.indexOf(repo));
-            if(repo.getStargazers_count() != oldRepo.getStargazers_count()) {
+            if (repo.getStargazers_count() != oldRepo.getStargazers_count()) {
                 oldRepo.setNewStarsCount(repo.getStargazers_count() - oldRepo.getStargazers_count());
                 oldRepo.setStargazers_count(repo.getStargazers_count());
             }
-            if(repo.getForks_count() != oldRepo.getForks_count()) {
+            if (repo.getForks_count() != oldRepo.getForks_count()) {
                 oldRepo.setNewForksCount(repo.getForks_count() - oldRepo.getForks_count());
                 oldRepo.setForks_count(repo.getForks_count());
             }
 
             return oldRepo;
-        }else{
+        } else {
             repos.add(repo); //a new repo
             return repo;
         }
@@ -59,13 +65,14 @@ public class RepoManager {
         if (json != null) {
             List<Repo> saved = gson.fromJson(json, new TypeToken<List<Repo>>() {
             }.getType());
-            if (saved != null)
+            if (saved != null) {
                 this.repos = saved;
+            }
         }
         return getRepos();
     }
 
-    public Observable<List<Repo>> loadRepos(){
+    public Observable<List<Repo>> loadRepos() {
         return Observable.create(new Observable.OnSubscribe<List<Repo>>() {
             @Override
             public void call(Subscriber<? super List<Repo>> subscriber) {
@@ -85,8 +92,9 @@ public class RepoManager {
     }
 
     public RepoManager addRepos(List<Repo> repos) {
-        for(Repo repo : repos)
+        for (Repo repo : repos) {
             addRepo(repo);
+        }
         return this;
     }
 }
