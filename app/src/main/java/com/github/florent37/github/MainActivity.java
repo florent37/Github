@@ -19,7 +19,7 @@ import com.github.florent37.github.user.UserManager;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -34,13 +34,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Inject
     GithubAPI githubAPI;
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @Bind(R.id.drawer_layout)
+    @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
 
-    @Bind(R.id.navigationView)
+    @BindView(R.id.navigationView)
     NavigationView navigationView;
 
     ActionBarDrawerToggle actionBarDrawerToggle;

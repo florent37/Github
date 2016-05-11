@@ -17,7 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -34,7 +34,7 @@ public class ListEventFragment extends Fragment {
     @Inject
     UserManager userManager;
 
-    @Bind(R.id.carpaccio)
+    @BindView(R.id.carpaccio)
     Carpaccio carpaccio;
 
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
@@ -59,7 +59,6 @@ public class ListEventFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
         if (userManager.getUser() != null)
             compositeSubscription.add(
                     githubAPI.userEvents(userManager.getUser().getLogin())

@@ -8,7 +8,7 @@ import com.github.florent37.carpaccio.controllers.adapter.Holder;
 import com.github.florent37.github.R;
 import com.github.florent37.github.repo.Repo;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -18,9 +18,9 @@ public class RepoHolder extends Holder{
 
     int textColor;
 
-    @Bind(R.id.newStars)
+    @BindView(R.id.newStars)
     TextView newStars;
-    @Bind(R.id.newForks)
+    @BindView(R.id.newForks)
     TextView newForks;
 
     public RepoHolder(View itemView) {

@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Observer;
@@ -44,7 +44,7 @@ public class ListRepoFragment extends Fragment {
     @Inject
     GithubAPI githubAPI;
 
-    @Bind(R.id.carpaccio)
+    @BindView(R.id.carpaccio)
     Carpaccio carpaccio;
 
     String userName;
