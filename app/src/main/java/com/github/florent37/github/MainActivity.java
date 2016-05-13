@@ -1,30 +1,20 @@
 package com.github.florent37.github;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 
-import com.github.florent37.carpaccio.Carpaccio;
-import com.github.florent37.github.event.ListEventFragment;
 import com.github.florent37.github.repo.ListRepoFragment;
-import com.github.florent37.github.user.User;
-import com.github.florent37.github.user.UserManager;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -75,18 +65,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void displayStats(String userName) {
-        String tag = "ListRepoFragment"+userName;
+        String tag = "ListRepoFragment" + userName;
         if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
             getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, ListRepoFragment.newInstance(userName), tag)
-                .commit();
-        }
-    }
-
-    public void displayEvents() {
-        if (getSupportFragmentManager().findFragmentByTag("ListEventFragment") == null) {
-            getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, ListEventFragment.newInstance(), "ListEventFragment")
                 .commit();
         }
     }
@@ -99,9 +81,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return closeDrawer();
             case R.id.meetic:
                 displayStats(USER_MEETIC);
-                return closeDrawer();
-            case R.id.events:
-                displayEvents();
                 return closeDrawer();
         }
         return false;
