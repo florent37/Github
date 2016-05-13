@@ -88,7 +88,7 @@ public class ListRepoFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        repoManager.onStart(getActivity());
+        repoManager.onStart(getActivity(), userName);
 
         compositeSubscription.add(
             repoManager.loadRepos()

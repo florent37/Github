@@ -33,12 +33,14 @@ public class RepoManager {
 
     }
 
-    public void onStart(Context context) {
-        sharedPreferences = context.getSharedPreferences(PREFS_REPOS, Context.MODE_PRIVATE);
+    public void onStart(Context context, String account) {
+        repos.clear();
+        sharedPreferences = context.getSharedPreferences(PREFS_REPOS + account, Context.MODE_PRIVATE);
     }
 
     public void onStop() {
         sharedPreferences = null;
+        repos.clear();
     }
 
     public Repo addRepo(Repo repo) {
