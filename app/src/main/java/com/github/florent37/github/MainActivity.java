@@ -7,32 +7,30 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 
 import com.github.florent37.github.repo.ListRepoFragment;
 
 import javax.inject.Inject;
 
+import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String USER_FLORENT37 = "florent37";
-    public static final String USER_MEETIC = "meetic";
+    @BindArray(R.array.accounts) String[] accounts;
 
     @Inject
     GithubAPI githubAPI;
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-
     @BindView(R.id.navigationView)
     NavigationView navigationView;
-
     ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
@@ -47,10 +45,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar.setTitleTextColor(0xFFFFFFFF);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Menu navMenu = navigationView.getMenu();
+        navMenu.clear();
+        SubMenu accountsMenu = navMenu.addSubMenu("Accounts");
+
+        for (String account : accounts) {
+            accountsMenu.add(account);
+        }
         navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.addDrawerListener((actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0)));
 
-        displayStats(USER_FLORENT37);
+        displayStats(accounts[0]);
     }
 
     @Override
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void displayStats(String userName) {
         String tag = "ListRepoFragment" + userName;
+        setTitle("Github " + userName);
         if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
             getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainer, ListRepoFragment.newInstance(userName), tag)
@@ -75,15 +81,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.florent37:
-                displayStats(USER_FLORENT37);
-                return closeDrawer();
-            case R.id.meetic:
-                displayStats(USER_MEETIC);
-                return closeDrawer();
-        }
-        return false;
+        String text = menuItem.getTitle().toString();
+        displayStats(text);
+        return closeDrawer();
     }
 
     protected boolean closeDrawer() {
