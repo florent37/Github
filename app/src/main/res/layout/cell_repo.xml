@@ -12,11 +12,10 @@
     >
 
     <TextView
+        android:id="@+id/repoName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="
-                setText($repo.name);
-                font(Roboto-Black.ttf);"
+        android:textStyle="bold"
         android:textSize="20sp"
         tools:text="UserName" />
 
@@ -34,19 +33,12 @@
             android:text="Stars :" />
 
         <TextView
-            android:id="@+id/stars"
+            android:id="@+id/repoStars"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingRight="10dp"
-            android:tag="setText($repo.stars)"
             tools:text="100" />
 
-        <TextView
-            android:id="@+id/newStars"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tag="setText($repo.newStars)"
-            tools:text="10" />
     </LinearLayout>
 
     <LinearLayout
@@ -63,17 +55,10 @@
             android:text="Forks :" />
 
         <TextView
+            android:id="@+id/repoForks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingRight="10dp"
-            android:tag="setText($repo.forks)"
-            tools:text="20" />
-
-        <TextView
-            android:id="@+id/newForks"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:tag="setText($repo.newForks)"
             tools:text="20" />
 
     </LinearLayout>

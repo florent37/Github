@@ -7,6 +7,7 @@ import java.util.List;
 
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -15,7 +16,7 @@ import rx.Observable;
 public interface GithubAPI {
 
     @GET("/users/{user}/repos")
-    Observable<List<Repo>> listRepos(@Path("user") String user);
+    Observable<List<Repo>> listRepos(@Path("user") String user, @Query("sort") String sort);
 
     @GET("/users/{user}")
     Observable<User> user(@Path("user") String user);

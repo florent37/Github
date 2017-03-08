@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="rxandroid-1.2.0">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/io.reactivex/rxandroid/1.2.0/res" />
-      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/io.reactivex/rxandroid/1.2.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/8d24fd6f48cf6cb645ee0f4d871850cb2e064c2e/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/8d24fd6f48cf6cb645ee0f4d871850cb2e064c2e/output/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

@@ -19,13 +19,16 @@ import rx.Subscriber;
 /**
  * Created by florentchampigny on 31/07/15.
  */
-@Singleton
+
 public class RepoManager {
 
     public final static String PREFS_REPOS = "PREFS_REPOS";
-    public final static String REPOS = "REPOS";
-    protected List<Repo> repos = new ArrayList<>();
+    private final static String REPOS = "REPOS";
+
+    private List<Repo> repos = new ArrayList<>();
+
     @Inject Gson gson;
+    @Inject Context context;
     @Inject @Named(PREFS_REPOS) SharedPreferences sharedPreferences;
 
     @Inject
@@ -33,7 +36,7 @@ public class RepoManager {
 
     }
 
-    public void onStart(Context context, String account) {
+    public void onStart(String account) {
         repos.clear();
         sharedPreferences = context.getSharedPreferences(PREFS_REPOS + account, Context.MODE_PRIVATE);
     }

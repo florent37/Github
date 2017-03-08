@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.github.florent37.carpaccio.Carpaccio xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="170dp"
-    android:orientation="vertical"
-    android:id="@+id/drawerCarpaccio"
-    app:register="
-        com.github.florent37.carpaccio.controllers.CommonViewController;
-        com.github.florent37.carpaccio.controllers.TextViewController;
-        com.github.florent37.carpaccio.controllers.ImageViewController;
-        ">
+    android:orientation="vertical">
 
     <ImageView
         android:layout_width="match_parent"
@@ -26,13 +20,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="20dp"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="72dp"
-        android:tag="
-            circle();
-            enablePreview();
-            previewUrl(https://avatars.githubusercontent.com/u/5754972?v=3);
-            url($user.avatar_url);"
-        />
+        android:layout_marginBottom="72dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,27 +32,25 @@
         android:weightSum="2">
 
         <TextView
+            android:id="@+id/userName"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:textSize="14sp"
             android:gravity="center_vertical"
             android:textColor="#FFFFFF"
-            android:tag="
-                font(Roboto-Medium.ttf);
-                setText($user.name)
-                "/>
+            />
+
         <TextView
+            android:id="@+id/userEmail"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textSize="14sp"
             android:textColor="#FFFFFF"
-            android:tag="
-                //font(Roboto-Regular.ttf);
-                setText($user.email)"/>
+            />
     </LinearLayout>
 
 
-</com.github.florent37.carpaccio.Carpaccio>
+</FrameLayout>

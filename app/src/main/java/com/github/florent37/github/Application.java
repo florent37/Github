@@ -1,5 +1,6 @@
 package com.github.florent37.github;
 
+import com.facebook.stetho.Stetho;
 import com.github.florent37.github.dagger.DaggerGithubComponent;
 import com.github.florent37.github.dagger.GithubComponent;
 import com.github.florent37.github.dagger.GithubModule;
@@ -21,6 +22,7 @@ public class Application extends android.app.Application {
         super.onCreate();
 
         Application.application = this;
+        Stetho.initializeWithDefaults(this);
 
         this.githubComponent = DaggerGithubComponent.builder()
                 .githubModule(new GithubModule(this))
