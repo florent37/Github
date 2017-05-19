@@ -19,14 +19,11 @@ import io.reactivex.schedulers.Schedulers;
 public class RepoPresenter extends AbstractPresenter<RepoPresenter.View> {
 
     private final Repository repository;
-    private final Scheduler.Worker worker;
 
     @Inject
     public RepoPresenter(Repository repository) {
         super();
         this.repository = repository;
-
-        this.worker = Schedulers.newThread().createWorker();
     }
 
     public void start(String userName) {
