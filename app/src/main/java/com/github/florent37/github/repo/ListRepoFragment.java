@@ -64,8 +64,8 @@ public class ListRepoFragment extends AbstractFragment implements Injectable {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        repoPresenter.bind(getLifecycle(), this.view);
-        repoPresenter.start(getArguments().getString(USERNAME));
+        //repoPresenter.bind(getLifecycle(), this.view);
+        //repoPresenter.start(getArguments().getString(USERNAME));
     }
 
 }
