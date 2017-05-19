@@ -9,8 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.florent37.github.Application;
+import com.github.florent37.github.AbstractFragment;
 import com.github.florent37.github.R;
+import com.github.florent37.github.dagger.Injectable;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import butterknife.ButterKnife;
 /**
  * Created by florentchampigny on 31/07/15.
  */
-public class ListRepoFragment extends Fragment {
+public class ListRepoFragment extends AbstractFragment implements Injectable {
 
     static final String USERNAME = "userName";
 
@@ -56,19 +57,15 @@ public class ListRepoFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        Application.app().component().inject(this);
-        repoPresenter.bind(this.view);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new RepoAdapter());
-
-        repoPresenter.start(getArguments().getString(USERNAME));
     }
 
     @Override
-    public void onDestroy() {
-        repoPresenter.unbind();
-        super.onDestroy();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        repoPresenter.bind(getLifecycle(), this.view);
+        repoPresenter.start(getArguments().getString(USERNAME));
     }
 
 }

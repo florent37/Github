@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Base application theme. -->
+    <!-- Base mainApplication theme. -->
     <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light">
     </style>
 

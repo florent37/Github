@@ -2,6 +2,7 @@ package com.github.florent37.github;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,13 +19,20 @@ import javax.inject.Inject;
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, HasSupportFragmentInjector {
 
     @BindArray(R.array.accounts) String[] accounts;
 
     @Inject
+    DispatchingAndroidInjector<Fragment> dispatchingAndroidInjector;
+
+    @Inject
     GithubAPI githubAPI;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawer_layout)
@@ -37,8 +45,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Application.app().component().inject(this);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -89,5 +95,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected boolean closeDrawer() {
         drawerLayout.postDelayed(() -> drawerLayout.closeDrawer(Gravity.LEFT), 500);
         return true;
+    }
+
+    @Override
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return dispatchingAndroidInjector;
     }
 }

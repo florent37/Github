@@ -1,5 +1,6 @@
 package com.github.florent37.github.dagger;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -14,15 +15,20 @@ import com.github.florent37.github.repo.repository.RepositoryProxy;
 import com.github.florent37.github.user.UserManager;
 import com.google.gson.Gson;
 
+import java.io.IOException;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -32,22 +38,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class GithubModule {
 
-    private final Context context;
-
-    public GithubModule(Context context) {
-        this.context = context;
-    }
-
-    @Provides
-    public Context provideContext() {
-        return context;
-    }
-
     @Singleton
     @Provides
     @Named(RepoManager.PREFS_REPOS)
-    public SharedPreferences provideSharedPrefsRepo(Context context) {
-        return context.getSharedPreferences(RepoManager.PREFS_REPOS, Context.MODE_PRIVATE);
+    public SharedPreferences provideSharedPrefsRepo(Application application) {
+        return application.getSharedPreferences(RepoManager.PREFS_REPOS, Context.MODE_PRIVATE);
     }
 
     @Singleton
@@ -67,6 +62,16 @@ public class GithubModule {
     public OkHttpClient provideClient(){
         return new OkHttpClient.Builder()
                 .addNetworkInterceptor(new StethoInterceptor())
+                .addInterceptor(chain -> {
+                    final Request request = chain.request();
+
+                    final Request newRequest = request.newBuilder()
+                            //ajoute "baerer: 1234567890" en header de chaque requête
+                            .addHeader("bearer","1234567890")
+                            .build();
+
+                    return chain.proceed(newRequest);
+                })
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
     }
@@ -77,7 +82,7 @@ public class GithubModule {
         return new Retrofit.Builder()
             .baseUrl(BuildConfig.URL_GITHUB)
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(okHttpClient)
             .build()
             .create(GithubAPI.class);

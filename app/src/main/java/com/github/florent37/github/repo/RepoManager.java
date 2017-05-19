@@ -1,20 +1,23 @@
 package com.github.florent37.github.repo;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.reactivestreams.Subscriber;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
 
 /**
  * Created by florentchampigny on 31/07/15.
@@ -28,7 +31,8 @@ public class RepoManager {
     private List<Repo> repos = new ArrayList<>();
 
     @Inject Gson gson;
-    @Inject Context context;
+    @Inject
+    Application application;
     @Inject @Named(PREFS_REPOS) SharedPreferences sharedPreferences;
 
     @Inject
@@ -38,7 +42,7 @@ public class RepoManager {
 
     public void onStart(String account) {
         repos.clear();
-        sharedPreferences = context.getSharedPreferences(PREFS_REPOS + account, Context.MODE_PRIVATE);
+        sharedPreferences = application.getSharedPreferences(PREFS_REPOS + account, Context.MODE_PRIVATE);
     }
 
     public void onStop() {
@@ -78,13 +82,7 @@ public class RepoManager {
     }
 
     public Observable<List<Repo>> loadRepos() {
-        return Observable.create(new Observable.OnSubscribe<List<Repo>>() {
-            @Override
-            public void call(Subscriber<? super List<Repo>> subscriber) {
-                subscriber.onNext(load());
-                subscriber.onCompleted();
-            }
-        });
+        return Observable.fromCallable(this::load);
     }
 
     public void save() {
