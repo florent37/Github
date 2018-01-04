@@ -1,5 +1,11 @@
 # Github
 
+
+<a href="https://goo.gl/WXW8Dc">
+  <img alt="Android app on Google Play" src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png" />
+</a>
+
+
 This Github android sample application can give you a quick summary of your github repos.
 
 ![Alt sample](https://raw.githubusercontent.com/florent37/Github/master/screens/stats_small.png)
